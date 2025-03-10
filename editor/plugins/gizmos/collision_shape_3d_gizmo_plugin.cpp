@@ -426,7 +426,7 @@ void CollisionShape3DGizmoPlugin::redraw(EditorNode3DGizmo *p_gizmo) {
 
 		// Number of points in an octant. So there will be 8 * points_in_octant points in total.
 		// Correspond to the smoothness of the circle.
-		const uint32_t points_in_octant = 45;
+		const uint32_t points_in_octant = 8;
 		const real_t inc = (Math_PI / (4 * points_in_octant));
 		const real_t radius_squared = radius * radius;
 		real_t r = 0;
@@ -512,36 +512,7 @@ void CollisionShape3DGizmoPlugin::redraw(EditorNode3DGizmo *p_gizmo) {
 #undef PUSH_QUARTER_YZ
 
 		p_gizmo->add_lines(points, material, false, collision_color);
-
-		Vector3 d(0, height * 0.5 - radius, 0);
-		Vector<Vector3> collision_segments;
-
-		for (int i = 0; i < 64; i++) {
-			float ra = i * (Math_TAU / 64.0);
-			float rb = (i + 1) * (Math_TAU / 64.0);
-			Point2 a = Vector2(Math::sin(ra), Math::cos(ra)) * radius;
-			Point2 b = Vector2(Math::sin(rb), Math::cos(rb)) * radius;
-
-			collision_segments.push_back(Vector3(a.x, 0, a.y) + d);
-			collision_segments.push_back(Vector3(b.x, 0, b.y) + d);
-
-			collision_segments.push_back(Vector3(a.x, 0, a.y) - d);
-			collision_segments.push_back(Vector3(b.x, 0, b.y) - d);
-
-			if (i % 16 == 0) {
-				collision_segments.push_back(Vector3(a.x, 0, a.y) + d);
-				collision_segments.push_back(Vector3(a.x, 0, a.y) - d);
-			}
-
-			Vector3 dud = i < 32 ? d : -d;
-
-			collision_segments.push_back(Vector3(0, a.x, a.y) + dud);
-			collision_segments.push_back(Vector3(0, b.x, b.y) + dud);
-			collision_segments.push_back(Vector3(a.y, a.x, 0) + dud);
-			collision_segments.push_back(Vector3(b.y, b.x, 0) + dud);
-		}
-
-		p_gizmo->add_collision_segments(collision_segments);
+		p_gizmo->add_collision_segments(points);
 
 		Vector<Vector3> handles = {
 			Vector3(cs2->get_radius(), 0, 0),
